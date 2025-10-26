@@ -127,7 +127,7 @@ export default function CategoryTable() {
                          </Select>
 
                          <Button onClick={() => router.push("/categories/create")}>
-                              Add Admin
+                              Add Category
                          </Button>
                     </div>
                </div>
