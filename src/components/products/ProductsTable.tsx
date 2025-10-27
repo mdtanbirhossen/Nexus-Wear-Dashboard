@@ -31,7 +31,7 @@ import { Admin } from "@/types/admin"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 
-export default function AdminTable() {
+export default function ProductsTable() {
      // State
      const [currentPage, setCurrentPage] = useState(1)
      const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -71,22 +71,7 @@ export default function AdminTable() {
      // console.log(admins);
 
 
-
-     // Filtering
-     // const filteredAdmins = admins.filter((admin) => {
-     //      const matchesSearch =
-     //           admin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     //           admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     //           admin.phone.includes(searchTerm) ||
-     //           admin.role.name.toLowerCase().includes(searchTerm.toLowerCase())
-
-     //      const matchesStatus =
-     //           statusFilter === "all" ? true : admin.status === statusFilter
-
-     //      return matchesSearch && matchesStatus
-     // })
-
-
+     
 
 
      // Handlers

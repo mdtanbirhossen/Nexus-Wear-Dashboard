@@ -1,12 +1,11 @@
-import AdminTable from '@/components/admin/AdminTable';
-import React from 'react';
+import ProductsTable from '@/components/products/ProductsTable';
+
 
 const page = () => {
-       return <>
-              <AdminTable />
-       </>
-
-
+     return <>
+          <ProductsTable />
+     </>
+     
 };
 
 export default page;

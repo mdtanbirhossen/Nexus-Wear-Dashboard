@@ -2,7 +2,7 @@
 import ColorDetails from '@/components/color/ColorDetails';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <ColorDetails  />
@@ -10,4 +10,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

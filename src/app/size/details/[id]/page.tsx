@@ -2,7 +2,7 @@
 import SizeDetails from '@/components/size/SizeDetails';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <SizeDetails  />
@@ -10,4 +10,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

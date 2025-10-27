@@ -24,7 +24,7 @@ import { Role } from "@/types/role";
 import { Admin } from "@/types/admin";
 import Image from "next/image";
 
-const AdminForm = () => {
+const ProductForm = () => {
      /* ---------------------- State & Hooks ---------------------- */
      const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -359,4 +359,4 @@ const AdminForm = () => {
      );
 };
 
-export default AdminForm;
+export default ProductForm;

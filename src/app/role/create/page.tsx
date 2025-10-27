@@ -1,7 +1,7 @@
 import RoleForm from '@/components/role/RoleForm';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <RoleForm />
@@ -9,4 +9,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

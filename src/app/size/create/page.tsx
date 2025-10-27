@@ -2,7 +2,7 @@
 import SizeForm from '@/components/size/SizeForm';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <SizeForm />
@@ -10,4 +10,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

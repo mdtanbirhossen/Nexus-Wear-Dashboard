@@ -1,12 +1,12 @@
-import AdminForm from '@/components/admin/AdminForm';
+import ProductForm from '@/components/products/ProductForm';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
-               <AdminForm />
+               <ProductForm />
           </div>
      );
 };
 
-export default Page;
+export default page;

@@ -1,7 +1,7 @@
 import AdminForm from '@/components/admin/AdminForm';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <AdminForm />
@@ -9,4 +9,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

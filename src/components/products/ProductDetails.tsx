@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '../ui/card';
 import Image from 'next/image';
 
-const AdminDetails = () => {
+const ProductDetails = () => {
      const { id } = useParams();
      const { data, isLoading, isError } = useGetAdminByIdQuery(id);
      console.log(isError);
@@ -83,4 +83,4 @@ const AdminDetails = () => {
      );
 };
 
-export default AdminDetails;
+export default ProductDetails;

@@ -2,7 +2,7 @@
 import ColorForm from '@/components/color/ColorForm';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <ColorForm />
@@ -10,4 +10,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;
