@@ -1,46 +1,44 @@
 import { apiSlice } from "../apiSlice";
 
-export const adminApi = apiSlice.injectEndpoints({
+export const productsApi = apiSlice.injectEndpoints({
      endpoints: (builder) => ({
-          // adminApi.ts
-          getAllAdmins: builder.query({
+          // productsApi.ts
+          getAllProducts: builder.query({
                query: (params?: { page?: number; limit?: number; search?: string; status?: string }) => ({
-                    url: `/admin`,
+                    url: `/product`,
                     params,
                }),
-               providesTags: ["Admin"],
+               providesTags: ["Product"],
           }),
 
-          getAdminById: builder.query({
-               query: (adminId) => `/admin/${adminId}`
+          getProductById: builder.query({
+               query: (productId) => `/product/${productId}`
           }),
 
-          deleteAdmin: builder.mutation({
-               query: (adminId) => ({
-                    url: `/admin/${adminId}`,
+          deleteProduct: builder.mutation({
+               query: (productId) => ({
+                    url: `/product/${productId}`,
                     method: "DELETE",
                })
           }),
 
-          createAdmin: builder.mutation({
+          createProduct: builder.mutation({
                query: (formData: FormData) => ({
-                    url: '/admin',
+                    url: '/product',
                     method: "POST",
                     body: formData
                }),
-               invalidatesTags: ["Admin"],
+               invalidatesTags: ["Product"],
           }),
-          updateAdminDetails: builder.mutation({
-               query: ({ formData, adminId }) => ({
-                    url: `/admin/${adminId}`,
+          updateProductDetails: builder.mutation({
+               query: ({ formData, productId }) => ({
+                    url: `/product/${productId}`,
                     method: "PATCH",
                     body: formData
                }),
-               invalidatesTags: ["Admin"]
+               invalidatesTags: ["Product"]
           }),
-
-
      }),
 });
 
-export const { useGetAllAdminsQuery, useDeleteAdminMutation, useGetAdminByIdQuery, useCreateAdminMutation, useUpdateAdminDetailsMutation } = adminApi;
+export const { useGetAllProductsQuery,useGetProductByIdQuery,useDeleteProductMutation,useCreateProductMutation,useUpdateProductDetailsMutation } = productsApi;
