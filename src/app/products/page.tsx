@@ -1,13 +1,12 @@
-import { DialogDemo } from '@/components/shared/Dialog';
+import AdminTable from '@/components/admin/AdminTable';
 import React from 'react';
 
 const page = () => {
-    return (
-        <div>
-            products
-            <DialogDemo ></DialogDemo>
-        </div>
-    );
+       return <>
+              <AdminTable />
+       </>
+
+
 };
 
 export default page;
