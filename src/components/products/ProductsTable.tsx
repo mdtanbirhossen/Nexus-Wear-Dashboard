@@ -169,25 +169,21 @@ export default function ProductsTable() {
                                              </TableCell>
 
                                              <TableCell className="flex flex-wrap gap-1">
-                                                  {
-                                                       product?.images?.map((image, idx) => (
-                                                            <Image
-                                                                 key={idx}
-                                                                 src={image ?? "/profileImg.jpg"}
-                                                                 alt="images"
-                                                                 width={50}
-                                                                 height={50}
-                                                                 quality={75}
-                                                                 className="h-12 w-12 object-contain"
-                                                                 draggable={false}
-                                                            />
-                                                       ))
-                                                  }
+                                                  <Image
+                                                       key={idx}
+                                                       src={product.images?.[0] ?? "/profileImg.jpg"}
+                                                       alt="images"
+                                                       width={50}
+                                                       height={50}
+                                                       quality={75}
+                                                       className="h-12 w-12 object-contain"
+                                                       draggable={false}
+                                                  />
                                              </TableCell>
 
                                              <TableCell>{product.name}</TableCell>
                                              <TableCell>{product.productCode}</TableCell>
-                                             <TableCell>{product.description.slice(0,25) + "..."}</TableCell>
+                                             <TableCell>{product.description.slice(0, 25) + "..."}</TableCell>
                                              <TableCell>{product.price} tk</TableCell>
                                              <TableCell> {product.availability} </TableCell>
                                              <TableCell>
