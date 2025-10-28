@@ -157,7 +157,7 @@ export default function ProductsTable() {
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-6">
+                                        <TableCell colSpan={11} className="text-center py-6">
                                              Loading...
                                         </TableCell>
                                    </TableRow>
@@ -168,7 +168,7 @@ export default function ProductsTable() {
                                                   {(currentPage - 1) * itemsPerPage + idx + 1}
                                              </TableCell>
 
-                                             <TableCell className="flex gap-1">
+                                             <TableCell className="flex flex-wrap gap-1">
                                                   {
                                                        product?.images?.map((image, idx) => (
                                                             <Image
