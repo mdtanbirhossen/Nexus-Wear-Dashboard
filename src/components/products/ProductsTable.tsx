@@ -150,7 +150,6 @@ export default function ProductsTable() {
                                    <TableHead className="font-extrabold text-center">Colors</TableHead>
                                    <TableHead className="font-extrabold text-center">Sizes</TableHead>
                                    <TableHead className="font-extrabold text-center">View Count</TableHead>
-                                   <TableHead className="font-extrabold text-center">Last View At</TableHead>
                                    <TableHead className="font-extrabold text-center">Actions</TableHead>
                               </TableRow>
                          </TableHeader>
@@ -163,15 +162,15 @@ export default function ProductsTable() {
                                         </TableCell>
                                    </TableRow>
                               ) : products.length ? (
-                                   products.map((product, idx) => (
+                                   products?.map((product, idx) => (
                                         <TableRow key={product.id}>
                                              <TableCell>
                                                   {(currentPage - 1) * itemsPerPage + idx + 1}
                                              </TableCell>
 
-                                             <TableCell>
+                                             <TableCell className="flex gap-1">
                                                   {
-                                                       product.images.map((image, idx) => (
+                                                       product?.images?.map((image, idx) => (
                                                             <Image
                                                                  key={idx}
                                                                  src={image ?? "/profileImg.jpg"}
@@ -188,26 +187,19 @@ export default function ProductsTable() {
 
                                              <TableCell>{product.name}</TableCell>
                                              <TableCell>{product.productCode}</TableCell>
-                                             <TableCell>{product.description}</TableCell>
-                                             <TableCell>{product.price}</TableCell>
+                                             <TableCell>{product.description.slice(0,25) + "..."}</TableCell>
+                                             <TableCell>{product.price} tk</TableCell>
                                              <TableCell> {product.availability} </TableCell>
                                              <TableCell>
-                                                  {
-                                                       product.colors.map((color, idx) => (
-                                                            <h5 key={idx}>{color.name}</h5>
-                                                       ))
-                                                  }
-                                             </TableCell>
-                                             <TableCell>
-                                                  {
-                                                       product.sizes.map((size, idx) => (
-                                                            <h5 key={idx}>{size.name}</h5>
-                                                       ))
-                                                  }
+                                                  {product?.colors?.map(c => c.name).join(', ')}
                                              </TableCell>
 
+                                             <TableCell>
+                                                  {product?.sizes?.map(s => s.name).join(', ')}
+                                             </TableCell>
+
+
                                              <TableCell> {product.viewCount} </TableCell>
-                                             <TableCell> {product.lastViewedAt} </TableCell>
 
 
                                              {/* Actions */}
