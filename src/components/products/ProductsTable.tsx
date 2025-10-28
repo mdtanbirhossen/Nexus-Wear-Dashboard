@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 
-
+// Redux
 
 // UI Components
 import { Button } from "@/components/ui/button"
@@ -27,13 +27,11 @@ import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog"
 import { Pencil, Trash, Eye } from "lucide-react"
 // Types
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { useDeleteProductMutation, useGetAllProductsQuery } from "@/redux/api/productsApi/productsApi"
+import { Product } from "@/types/product"
 
 
-import { useDeleteCategoryMutation, useGetAllCategoriesQuery } from "@/redux/api/categoryApi/categoryApi"
-import { Category } from "@/types/categoryAndSubcategory"
-
-
-export default function CategoryTable() {
+export default function ProductsTable() {
      // State
      const [currentPage, setCurrentPage] = useState(1)
      const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -55,29 +53,33 @@ export default function CategoryTable() {
      const router = useRouter()
 
      // API calls
-     const { data, isLoading } = useGetAllCategoriesQuery({
+     const { data, isLoading } = useGetAllProductsQuery({
           page: currentPage,
           limit: itemsPerPage,
           search: debouncedSearch,
           status: statusFilter === "all" ? undefined : statusFilter,
      })
+     console.log(data);
 
-     const [deleteCategory, { isLoading: isDeleting }] = useDeleteCategoryMutation()
+     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation()
 
 
 
-     // Data
-     const categories: Category[] = data?.data || []
+     // Data 
+     const products: Product[] = data?.data || []
+     console.log(products);
      const total = data?.total || 0
      const totalPages = Math.ceil(total / itemsPerPage)
-     console.log(categories);
+     // console.log(products);
+
+
 
 
      // Handlers
-     const handleDelete = async (categoryId: string) => {
-          if (categoryId) {
+     const handleDelete = async (productId: string) => {
+          if (productId) {
                try {
-                    await deleteCategory(categoryId)
+                    await deleteProduct(productId)
                } catch (error) {
                     console.error("Delete failed", error)
                }
@@ -89,9 +91,10 @@ export default function CategoryTable() {
 
      return (
           <div className="w-full pb-6">
+               {/* Search + Filter + Add */}
                <div className="flex flex-wrap gap-3  items-center justify-between mb-4 w-auto">
                     <Input
-                         placeholder="Search categories..."
+                         placeholder="Search products..."
                          value={searchTerm}
                          onChange={(e) => setSearchTerm(e.target.value)}
                          className="w-full md:max-w-sm"
@@ -126,8 +129,8 @@ export default function CategoryTable() {
                               </SelectContent>
                          </Select>
 
-                         <Button onClick={() => router.push("/categories/create")}>
-                              Add Category
+                         <Button onClick={() => router.push("/product/create")}>
+                              Add Admin
                          </Button>
                     </div>
                </div>
@@ -137,51 +140,73 @@ export default function CategoryTable() {
                     <Table>
                          <TableHeader>
                               <TableRow>
-                                   <TableHead className="text-center font-extrabold">*</TableHead>
-                                   <TableHead className=" font-extrabold">Image</TableHead>
-                                   <TableHead className="text-center font-extrabold">Name</TableHead>
-                                   <TableHead className="text-center font-extrabold">Description</TableHead>
-                                   <TableHead className="text-center font-extrabold">Total SubCategories</TableHead>
-                                   <TableHead className="text-center font-extrabold">CreatedAt</TableHead>
-                                   <TableHead className="text-center font-extrabold">Actions</TableHead>
+                                   <TableHead className="font-extrabold text-center">*</TableHead>
+                                   <TableHead className="font-extrabold ">Image</TableHead>
+                                   <TableHead className="font-extrabold text-center">Name</TableHead>
+                                   <TableHead className="font-extrabold text-center">Product Code</TableHead>
+                                   <TableHead className="font-extrabold text-center">Description</TableHead>
+                                   <TableHead className="font-extrabold text-center">Price</TableHead>
+                                   <TableHead className="font-extrabold text-center">Availability</TableHead>
+                                   <TableHead className="font-extrabold text-center">Colors</TableHead>
+                                   <TableHead className="font-extrabold text-center">Sizes</TableHead>
+                                   <TableHead className="font-extrabold text-center">View Count</TableHead>
+                                   <TableHead className="font-extrabold text-center">Actions</TableHead>
                               </TableRow>
                          </TableHeader>
 
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-6">
+                                        <TableCell colSpan={11} className="text-center py-6">
                                              Loading...
                                         </TableCell>
                                    </TableRow>
-                              ) : categories.length ? (
-                                   categories.map((category, idx) => (
-                                        <TableRow key={category.id}>
+                              ) : products.length ? (
+                                   products?.map((product, idx) => (
+                                        <TableRow key={product.id}>
                                              <TableCell>
                                                   {(currentPage - 1) * itemsPerPage + idx + 1}
                                              </TableCell>
 
-                                             <TableCell>
-                                                  <Image
-                                                       src={category.image ?? "/profileImg.jpg"}
-                                                       alt="images"
-                                                       width={50}
-                                                       height={50}
-                                                       quality={75}
-                                                       className="h-12 w-12 object-contain"
-                                                       draggable={false}
-                                                  />
+                                             <TableCell className="flex flex-wrap gap-1">
+                                                  {
+                                                       product?.images?.map((image, idx) => (
+                                                            <Image
+                                                                 key={idx}
+                                                                 src={image ?? "/profileImg.jpg"}
+                                                                 alt="images"
+                                                                 width={50}
+                                                                 height={50}
+                                                                 quality={75}
+                                                                 className="h-12 w-12 object-contain"
+                                                                 draggable={false}
+                                                            />
+                                                       ))
+                                                  }
                                              </TableCell>
 
-                                             <TableCell>{category.name}</TableCell>
-                                             <TableCell>{category.description.slice(0,20)+"...."}</TableCell>
-                                             <TableCell>{category.subcategory.length}</TableCell>
-                                             <TableCell>{category.createdAt.slice(0, 10)}</TableCell>
+                                             <TableCell>{product.name}</TableCell>
+                                             <TableCell>{product.productCode}</TableCell>
+                                             <TableCell>{product.description.slice(0,25) + "..."}</TableCell>
+                                             <TableCell>{product.price} tk</TableCell>
+                                             <TableCell> {product.availability} </TableCell>
+                                             <TableCell>
+                                                  {product?.colors?.map(c => c.name).join(', ')}
+                                             </TableCell>
+
+                                             <TableCell>
+                                                  {product?.sizes?.map(s => s.name).join(', ')}
+                                             </TableCell>
+
+
+                                             <TableCell> {product.viewCount} </TableCell>
+
+
                                              {/* Actions */}
                                              <TableCell>
                                                   {/* Edit */}
                                                   <Button
-                                                       onClick={() => router.push(`/categories/update/${category.id}`)}
+                                                       onClick={() => router.push(`/product/update/${product.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -190,7 +215,7 @@ export default function CategoryTable() {
 
                                                   {/* Details */}
                                                   <Button
-                                                       onClick={() => router.push(`/categories/details/${category.id}`)}
+                                                       onClick={() => router.push(`/product/details/${product.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -221,7 +246,7 @@ export default function CategoryTable() {
                                                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
                                                                  <AlertDialogAction
                                                                       disabled={isDeleting}
-                                                                      onClick={() => handleDelete(category?.id)}
+                                                                      onClick={() => handleDelete(product?.id)}
                                                                       className="bg-red-600 font-extrabold"
                                                                  >
                                                                       Continue

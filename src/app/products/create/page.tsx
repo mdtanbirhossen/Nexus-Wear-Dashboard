@@ -1,11 +1,10 @@
-
-import ColorForm from '@/components/color/ColorForm';
+import ProductForm from '@/components/products/ProductForm';
 import React from 'react';
 
 const page = () => {
      return (
           <div>
-               <ColorForm />
+               <ProductForm />
           </div>
      );
 };

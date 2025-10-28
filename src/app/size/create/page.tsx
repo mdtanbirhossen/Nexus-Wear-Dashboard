@@ -1,11 +1,11 @@
 
-import ColorForm from '@/components/color/ColorForm';
+import SizeForm from '@/components/size/SizeForm';
 import React from 'react';
 
 const page = () => {
      return (
           <div>
-               <ColorForm />
+               <SizeForm />
           </div>
      );
 };

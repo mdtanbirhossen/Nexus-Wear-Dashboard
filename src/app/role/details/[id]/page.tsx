@@ -2,7 +2,7 @@
 import RoleDetails from '@/components/role/RoleDetails';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <RoleDetails  />
@@ -10,4 +10,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

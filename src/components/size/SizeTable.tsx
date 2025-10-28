@@ -22,18 +22,18 @@ import {
      AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 // Icons
 import { Pencil, Trash, Eye } from "lucide-react"
 // Types
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { Color } from "@/types/size"
+
+// Redux
+import { useDeleteSizeMutation, useGetAllsizesQuery } from "@/redux/api/sizeApi/sizeApi"
 
 
-import { useDeleteCategoryMutation, useGetAllCategoriesQuery } from "@/redux/api/categoryApi/categoryApi"
-import { Category } from "@/types/categoryAndSubcategory"
-
-
-export default function CategoryTable() {
+export default function SizeTable() {
      // State
      const [currentPage, setCurrentPage] = useState(1)
      const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -55,29 +55,32 @@ export default function CategoryTable() {
      const router = useRouter()
 
      // API calls
-     const { data, isLoading } = useGetAllCategoriesQuery({
+     const { data, isLoading } = useGetAllsizesQuery({
           page: currentPage,
           limit: itemsPerPage,
           search: debouncedSearch,
           status: statusFilter === "all" ? undefined : statusFilter,
      })
 
-     const [deleteCategory, { isLoading: isDeleting }] = useDeleteCategoryMutation()
+
+
+     const [deleteSize, { isLoading: isDeleting }] = useDeleteSizeMutation()
 
 
 
      // Data
-     const categories: Category[] = data?.data || []
+     const sizes: Color[] = data?.data || []
      const total = data?.total || 0
      const totalPages = Math.ceil(total / itemsPerPage)
-     console.log(categories);
+     // console.log(sizes);
+
 
 
      // Handlers
-     const handleDelete = async (categoryId: string) => {
-          if (categoryId) {
+     const handleDelete = async (sizeId: string) => {
+          if (sizeId) {
                try {
-                    await deleteCategory(categoryId)
+                    await deleteSize(sizeId)
                } catch (error) {
                     console.error("Delete failed", error)
                }
@@ -89,9 +92,10 @@ export default function CategoryTable() {
 
      return (
           <div className="w-full pb-6">
+               {/* Search + Filter + Add */}
                <div className="flex flex-wrap gap-3  items-center justify-between mb-4 w-auto">
                     <Input
-                         placeholder="Search categories..."
+                         placeholder="Search sizes..."
                          value={searchTerm}
                          onChange={(e) => setSearchTerm(e.target.value)}
                          className="w-full md:max-w-sm"
@@ -126,8 +130,8 @@ export default function CategoryTable() {
                               </SelectContent>
                          </Select>
 
-                         <Button onClick={() => router.push("/categories/create")}>
-                              Add Category
+                         <Button onClick={() => router.push("/size/create")}>
+                              Add Color
                          </Button>
                     </div>
                </div>
@@ -137,13 +141,12 @@ export default function CategoryTable() {
                     <Table>
                          <TableHeader>
                               <TableRow>
-                                   <TableHead className="text-center font-extrabold">*</TableHead>
-                                   <TableHead className=" font-extrabold">Image</TableHead>
-                                   <TableHead className="text-center font-extrabold">Name</TableHead>
-                                   <TableHead className="text-center font-extrabold">Description</TableHead>
-                                   <TableHead className="text-center font-extrabold">Total SubCategories</TableHead>
-                                   <TableHead className="text-center font-extrabold">CreatedAt</TableHead>
-                                   <TableHead className="text-center font-extrabold">Actions</TableHead>
+                                   <TableHead className="font-extrabold text-center">*</TableHead>
+                                   {/* <TableHead className="font-extrabold ">Image</TableHead> */}
+                                   <TableHead className="font-extrabold text-center">Name</TableHead>
+                                   <TableHead className="font-extrabold text-center">Description</TableHead>
+                                   <TableHead className="font-extrabold text-center">CreatedAt</TableHead>
+                                   <TableHead className="font-extrabold text-center">Actions</TableHead>
                               </TableRow>
                          </TableHeader>
 
@@ -154,16 +157,16 @@ export default function CategoryTable() {
                                              Loading...
                                         </TableCell>
                                    </TableRow>
-                              ) : categories.length ? (
-                                   categories.map((category, idx) => (
-                                        <TableRow key={category.id}>
+                              ) : sizes.length ? (
+                                   sizes.map((size, idx) => (
+                                        <TableRow key={size.id}>
                                              <TableCell>
                                                   {(currentPage - 1) * itemsPerPage + idx + 1}
                                              </TableCell>
 
-                                             <TableCell>
+                                             {/* <TableCell>
                                                   <Image
-                                                       src={category.image ?? "/profileImg.jpg"}
+                                                       src={size.image ?? "/profileImg.jpg"}
                                                        alt="images"
                                                        width={50}
                                                        height={50}
@@ -171,17 +174,19 @@ export default function CategoryTable() {
                                                        className="h-12 w-12 object-contain"
                                                        draggable={false}
                                                   />
-                                             </TableCell>
+                                             </TableCell> */}
 
-                                             <TableCell>{category.name}</TableCell>
-                                             <TableCell>{category.description.slice(0,20)+"...."}</TableCell>
-                                             <TableCell>{category.subcategory.length}</TableCell>
-                                             <TableCell>{category.createdAt.slice(0, 10)}</TableCell>
+                                             <TableCell>{size.name}</TableCell>
+                                             <TableCell>{size.description.slice(0, 20) + "...."}</TableCell>
+                                             <TableCell>{size.createdAt.slice(0, 10)}</TableCell>
+
+                                             
+
                                              {/* Actions */}
                                              <TableCell>
                                                   {/* Edit */}
                                                   <Button
-                                                       onClick={() => router.push(`/categories/update/${category.id}`)}
+                                                       onClick={() => router.push(`/size/update/${size.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -190,7 +195,7 @@ export default function CategoryTable() {
 
                                                   {/* Details */}
                                                   <Button
-                                                       onClick={() => router.push(`/categories/details/${category.id}`)}
+                                                       onClick={() => router.push(`/size/details/${size.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -221,7 +226,7 @@ export default function CategoryTable() {
                                                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
                                                                  <AlertDialogAction
                                                                       disabled={isDeleting}
-                                                                      onClick={() => handleDelete(category?.id)}
+                                                                      onClick={() => handleDelete(size?.id)}
                                                                       className="bg-red-600 font-extrabold"
                                                                  >
                                                                       Continue

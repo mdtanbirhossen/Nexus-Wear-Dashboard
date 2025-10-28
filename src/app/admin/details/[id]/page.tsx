@@ -3,7 +3,7 @@
 import AdminDetails from '@/components/admin/AdminDetails';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <AdminDetails  />
@@ -11,4 +11,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

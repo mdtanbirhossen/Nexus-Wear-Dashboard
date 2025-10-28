@@ -19,7 +19,8 @@ export const colorApi = apiSlice.injectEndpoints({
                query: (colorId) => ({
                     url: `/color/${colorId}`,
                     method: "DELETE",
-               })
+               }),
+               invalidatesTags: ["Color"]
           }),
 
           createColor: builder.mutation({

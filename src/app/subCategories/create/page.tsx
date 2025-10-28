@@ -1,7 +1,7 @@
 import SubCategoryForm from '@/components/subCategories/SubCategoryForm';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <SubCategoryForm />
@@ -9,4 +9,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

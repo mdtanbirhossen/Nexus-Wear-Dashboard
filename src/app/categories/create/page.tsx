@@ -2,7 +2,7 @@
 import CategoryForm from '@/components/category/CategoryForm';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <CategoryForm />
@@ -10,4 +10,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;

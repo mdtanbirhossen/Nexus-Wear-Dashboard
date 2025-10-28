@@ -46,26 +46,28 @@ const data = {
     { name: "Categories", url: "/categories", icon: Folder },
     { name: "Add Category", url: "/categories/create", icon: PlusCircle },
     { name: "Subcategories", url: "/subCategories", icon: Layers },
-    { name: "Add Subcategory", url: "/subcategories/create", icon: PlusCircle },
-    { name: "Colors", url: "/colors", icon: Palette },
-    { name: "Sizes", url: "/sizes", icon: Ruler },
-    { name: "Fabrics", url: "/fabrics", icon: Square },
-    { name: "Materials", url: "/materials", icon: Square },
+    { name: "Add Subcategory", url: "/subCategories/create", icon: PlusCircle },
+    { name: "Colors", url: "/color", icon: Palette },
+    { name: "Add Color", url: "/color/create", icon: PlusCircle },
+    { name: "Sizes", url: "/size", icon: Ruler },
+    { name: "Add Size", url: "/size/create", icon: PlusCircle },
+//     { name: "Fabrics", url: "/fabrics", icon: Square },
+//     { name: "Materials", url: "/materials", icon: Square },
   ],
-  marketing: [
-    { name: "Subscribers", url: "/subscribers", icon: Mail },
-    { name: "Notifications", url: "/notifications", icon: Bell },
-    { name: "Banners", url: "/banners", icon: Image },
-    { name: "Social Links", url: "/social-links", icon: Share2 },
-  ],
-  support: [
-    { name: "FAQ", url: "/faq", icon: HelpCircle },
-    { name: "Contacts", url: "/contacts", icon: Mail },
-  ],
+//   marketing: [
+//     { name: "Subscribers", url: "/subscribers", icon: Mail },
+//     { name: "Notifications", url: "/notifications", icon: Bell },
+//     { name: "Banners", url: "/banners", icon: Image },
+//     { name: "Social Links", url: "/social-links", icon: Share2 },
+//   ],
+//   support: [
+//     { name: "FAQ", url: "/faq", icon: HelpCircle },
+//     { name: "Contacts", url: "/contacts", icon: Mail },
+//   ],
   userManagement: [
     { name: "Users", url: "/users", icon: Users },
     { name: "Admins", url: "/admin", icon: UserCog },
-    { name: "Roles & Permissions", url: "/roles", icon: Shield },
+    { name: "Roles & Permissions", url: "/role", icon: Shield },
   ],
   settings: [
     { name: "General Settings", url: "/settings/general", icon: Settings },
@@ -85,8 +87,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects title="Main" items={data.main} />
         <NavProjects title="Ecommerce" items={data.ecommerce} />
         <NavProjects title="Catalog" items={data.catalog} />
-        <NavProjects title="Marketing" items={data.marketing} />
-        <NavProjects title="Support" items={data.support} />
+        {/* <NavProjects title="Marketing" items={data.marketing} /> */}
+        {/* <NavProjects title="Support" items={data.support} /> */}
         <NavProjects title="User Management" items={data.userManagement} />
         <NavProjects title="Settings" items={data.settings} />
       </SidebarContent>

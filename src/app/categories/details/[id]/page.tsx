@@ -1,7 +1,7 @@
 import CategoryDetails from '@/components/category/CategoryDetails';
 import React from 'react';
 
-const Page = () => {
+const page = () => {
      return (
           <div>
                <CategoryDetails  />
@@ -9,4 +9,4 @@ const Page = () => {
      );
 };
 
-export default Page;
+export default page;
