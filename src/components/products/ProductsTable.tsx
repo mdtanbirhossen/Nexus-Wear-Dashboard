@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 
 // Redux
-import { useDeleteAdminMutation, useGetAllAdminsQuery } from "@/redux/api/adminApi/adminApi"
 
 // UI Components
 import { Button } from "@/components/ui/button"
@@ -27,8 +26,9 @@ import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog"
 // Icons
 import { Pencil, Trash, Eye } from "lucide-react"
 // Types
-import { Admin } from "@/types/admin"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { useDeleteProductMutation, useGetAllProductsQuery } from "@/redux/api/productsApi/productsApi"
+import { Product } from "@/types/product"
 
 
 export default function ProductsTable() {
@@ -53,32 +53,33 @@ export default function ProductsTable() {
      const router = useRouter()
 
      // API calls
-     const { data, isLoading } = useGetAllAdminsQuery({
+     const { data, isLoading } = useGetAllProductsQuery({
           page: currentPage,
           limit: itemsPerPage,
           search: debouncedSearch,
           status: statusFilter === "all" ? undefined : statusFilter,
      })
+     console.log(data);
 
-     const [deleteAdmin, { isLoading: isDeleting }] = useDeleteAdminMutation()
+     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation()
 
 
 
-     // Data
-     const admins: Admin[] = data?.data || []
+     // Data 
+     const products: Product[] = data?.data || []
+     console.log(products);
      const total = data?.total || 0
      const totalPages = Math.ceil(total / itemsPerPage)
-     // console.log(admins);
+     // console.log(products);
 
 
-     
 
 
      // Handlers
-     const handleDelete = async (adminId: string) => {
-          if (adminId) {
+     const handleDelete = async (productId: string) => {
+          if (productId) {
                try {
-                    await deleteAdmin(adminId)
+                    await deleteProduct(productId)
                } catch (error) {
                     console.error("Delete failed", error)
                }
@@ -93,7 +94,7 @@ export default function ProductsTable() {
                {/* Search + Filter + Add */}
                <div className="flex flex-wrap gap-3  items-center justify-between mb-4 w-auto">
                     <Input
-                         placeholder="Search admins..."
+                         placeholder="Search products..."
                          value={searchTerm}
                          onChange={(e) => setSearchTerm(e.target.value)}
                          className="w-full md:max-w-sm"
@@ -128,7 +129,7 @@ export default function ProductsTable() {
                               </SelectContent>
                          </Select>
 
-                         <Button onClick={() => router.push("/admin/create")}>
+                         <Button onClick={() => router.push("/product/create")}>
                               Add Admin
                          </Button>
                     </div>
@@ -142,10 +143,14 @@ export default function ProductsTable() {
                                    <TableHead className="font-extrabold text-center">*</TableHead>
                                    <TableHead className="font-extrabold ">Image</TableHead>
                                    <TableHead className="font-extrabold text-center">Name</TableHead>
-                                   <TableHead className="font-extrabold text-center">Email</TableHead>
-                                   <TableHead className="font-extrabold text-center">Phone</TableHead>
-                                   <TableHead className="font-extrabold text-center">Role</TableHead>
-                                   <TableHead className="font-extrabold text-center">Status</TableHead>
+                                   <TableHead className="font-extrabold text-center">Product Code</TableHead>
+                                   <TableHead className="font-extrabold text-center">Description</TableHead>
+                                   <TableHead className="font-extrabold text-center">Price</TableHead>
+                                   <TableHead className="font-extrabold text-center">Availability</TableHead>
+                                   <TableHead className="font-extrabold text-center">Colors</TableHead>
+                                   <TableHead className="font-extrabold text-center">Sizes</TableHead>
+                                   <TableHead className="font-extrabold text-center">View Count</TableHead>
+                                   <TableHead className="font-extrabold text-center">Last View At</TableHead>
                                    <TableHead className="font-extrabold text-center">Actions</TableHead>
                               </TableRow>
                          </TableHeader>
@@ -157,46 +162,59 @@ export default function ProductsTable() {
                                              Loading...
                                         </TableCell>
                                    </TableRow>
-                              ) : admins.length ? (
-                                   admins.map((admin, idx) => (
-                                        <TableRow key={admin.id}>
+                              ) : products.length ? (
+                                   products.map((product, idx) => (
+                                        <TableRow key={product.id}>
                                              <TableCell>
                                                   {(currentPage - 1) * itemsPerPage + idx + 1}
                                              </TableCell>
 
                                              <TableCell>
-                                                  <Image
-                                                       src={admin.image ?? "/profileImg.jpg"}
-                                                       alt="images"
-                                                       width={50}
-                                                       height={50}
-                                                       quality={75}
-                                                       className="h-12 w-12 object-contain"
-                                                       draggable={false}
-                                                  />
+                                                  {
+                                                       product.images.map((image, idx) => (
+                                                            <Image
+                                                                 key={idx}
+                                                                 src={image ?? "/profileImg.jpg"}
+                                                                 alt="images"
+                                                                 width={50}
+                                                                 height={50}
+                                                                 quality={75}
+                                                                 className="h-12 w-12 object-contain"
+                                                                 draggable={false}
+                                                            />
+                                                       ))
+                                                  }
                                              </TableCell>
 
-                                             <TableCell>{admin.name}</TableCell>
-                                             <TableCell>{admin.email}</TableCell>
-                                             <TableCell>{admin.phone}</TableCell>
-                                             <TableCell>{admin.role.name}</TableCell>
-
+                                             <TableCell>{product.name}</TableCell>
+                                             <TableCell>{product.productCode}</TableCell>
+                                             <TableCell>{product.description}</TableCell>
+                                             <TableCell>{product.price}</TableCell>
+                                             <TableCell> {product.availability} </TableCell>
                                              <TableCell>
-                                                  <span
-                                                       className={`px-2 py-1 text-xs font-semibold rounded-full ${admin.status === "active"
-                                                            ? "bg-green-100 text-green-800"
-                                                            : "bg-red-100 text-red-800"
-                                                            }`}
-                                                  >
-                                                       {admin.status}
-                                                  </span>
+                                                  {
+                                                       product.colors.map((color, idx) => (
+                                                            <h5 key={idx}>{color.name}</h5>
+                                                       ))
+                                                  }
                                              </TableCell>
+                                             <TableCell>
+                                                  {
+                                                       product.sizes.map((size, idx) => (
+                                                            <h5 key={idx}>{size.name}</h5>
+                                                       ))
+                                                  }
+                                             </TableCell>
+
+                                             <TableCell> {product.viewCount} </TableCell>
+                                             <TableCell> {product.lastViewedAt} </TableCell>
+
 
                                              {/* Actions */}
                                              <TableCell>
                                                   {/* Edit */}
                                                   <Button
-                                                       onClick={() => router.push(`/admin/update/${admin.id}`)}
+                                                       onClick={() => router.push(`/product/update/${product.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -205,7 +223,7 @@ export default function ProductsTable() {
 
                                                   {/* Details */}
                                                   <Button
-                                                       onClick={() => router.push(`/admin/details/${admin.id}`)}
+                                                       onClick={() => router.push(`/product/details/${product.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -236,7 +254,7 @@ export default function ProductsTable() {
                                                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
                                                                  <AlertDialogAction
                                                                       disabled={isDeleting}
-                                                                      onClick={() => handleDelete(admin?.id)}
+                                                                      onClick={() => handleDelete(product?.id)}
                                                                       className="bg-red-600 font-extrabold"
                                                                  >
                                                                       Continue
