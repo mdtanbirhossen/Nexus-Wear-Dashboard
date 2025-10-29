@@ -31,6 +31,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 
 import { useDeleteCategoryMutation, useGetAllCategoriesQuery } from "@/redux/api/categoryApi/categoryApi"
 import { Category } from "@/types/categoryAndSubcategory"
+import Loading from "../shared/Loading"
 
 
 export default function CategoryTable() {
@@ -150,8 +151,8 @@ export default function CategoryTable() {
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-6">
-                                             Loading...
+                                        <TableCell colSpan={7} className="w-full  py-6 ">
+                                             <Loading />
                                         </TableCell>
                                    </TableRow>
                               ) : categories.length ? (
@@ -174,7 +175,7 @@ export default function CategoryTable() {
                                              </TableCell>
 
                                              <TableCell>{category.name}</TableCell>
-                                             <TableCell>{category.description.slice(0,20)+"...."}</TableCell>
+                                             <TableCell>{category.description.slice(0, 20) + "...."}</TableCell>
                                              <TableCell>{category.subcategory.length}</TableCell>
                                              <TableCell>{category.createdAt.slice(0, 10)}</TableCell>
                                              {/* Actions */}

@@ -28,6 +28,7 @@ import { Pencil, Trash, Eye } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { useDeleteRoleMutation, useGetAllRolesQuery } from "@/redux/api/roleApi/roleApi"
 import { Role } from "@/types/role"
+import Loading from "../shared/Loading"
 
 
 export default function RoleTable() {
@@ -148,8 +149,8 @@ export default function RoleTable() {
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-6">
-                                             Loading...
+                                        <TableCell colSpan={7} className="w-full  py-6 ">
+                                             <Loading />
                                         </TableCell>
                                    </TableRow>
                               ) : roles.length ? (

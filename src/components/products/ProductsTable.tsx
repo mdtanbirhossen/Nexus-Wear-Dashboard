@@ -29,6 +29,7 @@ import { Pencil, Trash, Eye } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { useDeleteProductMutation, useGetAllProductsQuery } from "@/redux/api/productsApi/productsApi"
 import { Product } from "@/types/product"
+import Loading from "../shared/Loading"
 
 
 export default function ProductsTable() {
@@ -157,8 +158,8 @@ export default function ProductsTable() {
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={11} className="text-center py-6">
-                                             Loading...
+                                        <TableCell colSpan={11} className="w-full  py-6 ">
+                                             <Loading />
                                         </TableCell>
                                    </TableRow>
                               ) : products.length ? (
