@@ -20,6 +20,7 @@ import { useGetAllSubCategoriesQuery } from "@/redux/api/subCategoryApi/subCateg
 import Select from "react-select";
 import Image from "next/image";
 import Loading from "../shared/Loading";
+import toast from "react-hot-toast";
 
 const ProductForm = () => {
      const [images, setImages] = useState<string[]>([]);
@@ -95,40 +96,29 @@ const ProductForm = () => {
 
      /* ---------------------- Submit Handler ---------------------- */
      const onSubmit: SubmitHandler<Product> = async (data) => {
-          console.log(data);
-          // const formData = new FormData();
+          const payload = {
+               name: data.name,
+               productCode: data.productCode,
+               description: data.description,
+               price: Number(data.price), // ensure it's a number
+               availability: data.availability,
+               categoryId: Number(data.categoryId),
+               subcategoryId: Number(data.subcategoryId),
+               colorIds: data.colorIds || [],
+               sizeIds: data.sizeIds || [],
+               images, 
+          };
 
-          // formData.append("name", data.name);
-          // formData.append("email", data.email);
-          // formData.append("description", data.phone);
-          // formData.append("price", data.price);
-          // formData.append("addressLine", data.addressLine);
-          // formData.append("roleId", String(data.roleId));
-          // formData.append("status", data.status);
 
-          // // Only include password if creating OR if user typed a new one
-          // if (formattedText === "create" || data.password) {
-          //      formData.append("password", data.password);
-          // }
+          try {
+               const result = await createProduct(payload).unwrap();
+               toast.success(`Product Created Successfully`);
 
-          // if (data.image && data.image[0]) {
-          //      formData.append("image", data.image[0]);
-          // }
-
-          // try {
-          //      if (formattedText === "create") {
-          //           const result = await createProduct(formData).unwrap();
-          //           toast.success(`${result.data.role.name} created successfully`);
-          //      } else {
-          //           const result = await updateAdminDetails({ formData, adminId: id }).unwrap();
-          //           console.log(result);
-          //           toast.success(`${result.data.role.name} updated successfully`);
-          //      }
-          //      router.push("/admin");
-          // } catch (err) {
-          //      console.error("Failed to save admin:", err);
-          //      toast.error("Failed to save admin");
-          // }
+               router.push("/admin");
+          } catch (err) {
+               console.error("Failed to save admin:", err);
+               toast.error("Failed to save admin");
+          }
           // reset()
      };
 
@@ -223,7 +213,7 @@ const ProductForm = () => {
                               {
                                    loading && (
                                         <div className="w-24 h-24  rounded-b-md border bg-gray-200 mt-4 flex items-center  justify-center">
-                                           <Loading />
+                                             <Loading />
                                         </div>
                                    )
                               }
@@ -251,10 +241,10 @@ const ProductForm = () => {
 
                          {/* productCode */}
                          <div>
-                              <Label className="block text-sm font-medium mb-1">Email</Label>
+                              <Label className="block text-sm font-medium mb-1">Product Code</Label>
                               <Input
                                    type="text"
-                                   placeholder="Enter Admin Email"
+                                   placeholder="Enter Product Code"
                                    {...register("productCode", { required: "productCode is required" })}
                                    className=" w-full border border-gray-300 "
                               />
@@ -267,7 +257,7 @@ const ProductForm = () => {
 
                          {/* Description */}
                          <div>
-                              <Label className="block text-sm font-medium mb-1">Phone</Label>
+                              <Label className="block text-sm font-medium mb-1">Description</Label>
                               <Input
                                    type="text"
                                    placeholder="Enter  Description"
