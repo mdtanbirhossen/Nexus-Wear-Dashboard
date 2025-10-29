@@ -2,7 +2,7 @@ import { apiSlice } from "../apiSlice";
 
 export const colorApi = apiSlice.injectEndpoints({
      endpoints: (builder) => ({
-          // adminApi.ts
+          // colorApi.ts
           getAllColors: builder.query({
                query: (params?: { page?: number; limit?: number; search?: string; status?: string }) => ({
                     url: `/color`,

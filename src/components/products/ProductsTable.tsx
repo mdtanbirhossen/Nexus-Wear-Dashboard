@@ -129,8 +129,8 @@ export default function ProductsTable() {
                               </SelectContent>
                          </Select>
 
-                         <Button onClick={() => router.push("/product/create")}>
-                              Add Admin
+                         <Button onClick={() => router.push("/products/create")}>
+                              Add Product
                          </Button>
                     </div>
                </div>
