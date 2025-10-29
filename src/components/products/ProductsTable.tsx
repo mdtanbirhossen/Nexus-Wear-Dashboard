@@ -136,7 +136,7 @@ export default function ProductsTable() {
                </div>
 
                {/* Table */}
-               <div className="overflow-hidden rounded-md border text-center">
+               <div className="w-full overflow-x-auto rounded-md border text-center">
                     <Table>
                          <TableHeader>
                               <TableRow>
