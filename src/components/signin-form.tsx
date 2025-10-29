@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { loginAdmin } from "@/redux/features/authSlice"
 import toast from "react-hot-toast"
 import { useState } from "react"
+import Loading from "./shared/Loading"
 
 interface UserAuth {
      email: string
@@ -69,7 +70,9 @@ export default function SigninForm({ className, ...props }: React.ComponentProps
                          <Input {...register("password")} id="password" type="password" required />
                     </div>
                     <Button disabled={loading} type="submit" className="w-full">
-                         Login
+                         {
+                              loading ? <Loading /> : <>Login</> 
+                         }
                     </Button>
                </div>
           </form>

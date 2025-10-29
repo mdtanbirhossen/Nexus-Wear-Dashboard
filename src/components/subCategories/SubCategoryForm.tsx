@@ -18,10 +18,12 @@ import { Label } from "../ui/label";
 import { useGetAllCategoriesQuery } from "@/redux/api/categoryApi/categoryApi";
 import { Category, Subcategory } from "@/types/categoryAndSubcategory";
 import { useCreateSubCategoryMutation, useGetSubCategoryByIdQuery, useUpdateSubCategoryDetailsMutation } from "@/redux/api/subCategoryApi/subCategoryApi";
+import Loading from "../shared/Loading";
 
 const SubCategoryForm = () => {
      /* ---------------------- State & Hooks ---------------------- */
      const [imagePreview, setImagePreview] = useState<string | null>(null);
+     const [loading, setLoading] = useState(false)
 
      const { id } = useParams();
      const router = useRouter();
@@ -62,7 +64,7 @@ const SubCategoryForm = () => {
 
      /* ---------------------- Submit Handler ---------------------- */
      const onSubmit: SubmitHandler<Subcategory> = async (data) => {
-          console.log(data);
+          setLoading(true)
           const formData = new FormData();
 
           formData.append("name", data.name);
@@ -86,6 +88,8 @@ const SubCategoryForm = () => {
           } catch (err) {
                console.error("Failed to save SubCategory:", err);
                toast.error("Failed to save SubCategory");
+          } finally {
+               setLoading(false)
           }
      };
 
@@ -257,8 +261,10 @@ const SubCategoryForm = () => {
                          >
                               Go Back
                          </Button>
-                         <Button type="submit" className="bg-blue-600">
-                              {formattedText === "update" ? "Update" : "Create "}
+                         <Button disabled={loading} type="submit" >
+                              {
+                                   loading ? <Loading /> : formattedText === "update" ? "Update" : "Create "
+                              }
                          </Button>
                     </div>
                </form>

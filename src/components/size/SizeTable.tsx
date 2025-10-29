@@ -3,7 +3,6 @@
 import * as React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 
 
 
@@ -27,11 +26,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 // Icons
 import { Pencil, Trash, Eye } from "lucide-react"
 // Types
-import { Color } from "@/types/size"
 
 // Redux
 import { useDeleteSizeMutation, useGetAllsizesQuery } from "@/redux/api/sizeApi/sizeApi"
 import Loading from "../shared/Loading"
+import { Color } from "@/types/color"
 
 
 export default function SizeTable() {
