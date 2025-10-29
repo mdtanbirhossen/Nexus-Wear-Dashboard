@@ -18,6 +18,8 @@ import { useGetAllCategoriesQuery } from "@/redux/api/categoryApi/categoryApi";
 import { Category, Subcategory } from "@/types/categoryAndSubcategory";
 import { useGetAllSubCategoriesQuery } from "@/redux/api/subCategoryApi/subCategoryApi";
 import Select from "react-select";
+import Image from "next/image";
+import Loading from "../shared/Loading";
 
 const ProductForm = () => {
      const [images, setImages] = useState<string[]>([]);
@@ -127,7 +129,7 @@ const ProductForm = () => {
           //      console.error("Failed to save admin:", err);
           //      toast.error("Failed to save admin");
           // }
-          reset()
+          // reset()
      };
 
 
@@ -135,6 +137,7 @@ const ProductForm = () => {
 
 
      const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+          setLoading(true)
           const file = e.target.files?.[0];
           if (!file) return;
 
@@ -149,30 +152,95 @@ const ProductForm = () => {
                          : result?.data || result?.url;
 
                setImages((prev) => [...prev, imageUrl]);
+               reset()
           } catch (error) {
                console.error("Upload failed:", error);
+          } finally {
+               setLoading(false)
           }
      };
 
      return (
           <Card className="p-6 space-y-4 flex gap-4">
-               {/* 👇 File input triggers upload automatically */}
-               <div className="flex flex-col gap-4 items-center">
-                    <Input type="file" accept="image/*" onChange={handleFileChange} />
-               </div>
-
 
                {/* Left Section - Form Inputs */}
                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Card className="md:col-span-2 p-4 gap-2 rounded-sm shadow-none">
+                    <Card className="md:col-span-2 p-4 gap-2 rounded-sm shadow-none ">
+
+
+                         {/* image upload section */}
+                         <div className="w-full">
+                              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300  cursor-pointer hover:bg-gray-50 transition">
+                                   <div className="flex flex-col items-center justify-center">
+                                        <p className="text-sm text-gray-500">
+                                             <span className="font-semibold">Click to upload</span> or drag
+                                             & drop
+                                        </p>
+                                        <p className="text-xs text-gray-400">PNG, JPG (max 2MB)</p>
+                                   </div>
+                                   <Input
+                                        type="file"
+                                        accept="image/*"
+                                        {...register("file", {
+                                             validate: {
+                                                  lessThan2MB: (value) => {
+                                                       const files = value as unknown as FileList;
+                                                       return (
+                                                            !files?.[0] ||
+                                                            files[0].size <= 2_000_000 ||
+                                                            "File size should be less than 2MB"
+                                                       );
+                                                  },
+                                             },
+                                        })}
+                                        onChange={handleFileChange}
+                                        className=" hidden"
+                                   />
+                                   {errors.file && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                             {errors.file.message}
+                                        </p>
+                                   )}
+                              </label>
+                         </div>
+
+                         {/* Uploaded images preview */}
+                         <div className="flex gap-4">
+                              {images.length > 0 && (
+                                   <div className="flex flex-wrap gap-3 mt-4">
+                                        {images.map((img, index) => (
+                                             <Image
+                                                  key={index}
+                                                  src={img}
+                                                  alt={`Uploaded ${index + 1}`}
+                                                  width={100}
+                                                  height={100}
+                                                  className="w-24 h-24 object-contain rounded-b-md border"
+                                             />
+                                        ))}
+                                   </div>
+                              )}
+                              {
+                                   loading && (
+                                        <div className="w-24 h-24  rounded-b-md border bg-gray-200 mt-4 flex items-center  justify-center">
+                                           <Loading />
+                                        </div>
+                                   )
+                              }
+                         </div>
+
+
+
+
+
                          {/* Name */}
                          <div>
-                              <label className="block text-sm font-medium mb-1">Name</label>
+                              <Label className="block text-sm font-medium mb-1">Name</Label>
                               <Input
                                    type="text"
                                    placeholder="Enter Admin Name"
                                    {...register("name", { required: "Name is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
+                                   className=" w-full border border-gray-300 "
                               />
                               {errors.name && (
                                    <p className="text-red-500 text-sm mt-1">
@@ -183,12 +251,12 @@ const ProductForm = () => {
 
                          {/* productCode */}
                          <div>
-                              <label className="block text-sm font-medium mb-1">Email</label>
+                              <Label className="block text-sm font-medium mb-1">Email</Label>
                               <Input
                                    type="text"
                                    placeholder="Enter Admin Email"
                                    {...register("productCode", { required: "productCode is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
+                                   className=" w-full border border-gray-300 "
                               />
                               {errors.productCode && (
                                    <p className="text-red-500 text-sm mt-1">
@@ -199,12 +267,12 @@ const ProductForm = () => {
 
                          {/* Description */}
                          <div>
-                              <label className="block text-sm font-medium mb-1">Phone</label>
+                              <Label className="block text-sm font-medium mb-1">Phone</Label>
                               <Input
                                    type="text"
                                    placeholder="Enter  Description"
                                    {...register("description", { required: "Description is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
+                                   className=" w-full border border-gray-300 "
                               />
                               {errors.description && (
                                    <p className="text-red-500 text-sm mt-1">
@@ -215,14 +283,14 @@ const ProductForm = () => {
 
                          {/* Price */}
                          <div>
-                              <label className="block text-sm font-medium mb-1">
+                              <Label className="block text-sm font-medium mb-1">
                                    Price
-                              </label>
+                              </Label>
                               <Input
                                    type="text"
                                    placeholder="Enter Price"
                                    {...register("price", { required: "Price is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
+                                   className=" w-full border border-gray-300 "
                               />
                               {errors.price && (
                                    <p className="text-red-500 text-sm mt-1">
@@ -234,7 +302,7 @@ const ProductForm = () => {
 
                          {/* Categories */}
                          <div className="space-y-2">
-                              <label>Categories</label>
+                              <Label className="block text-sm font-medium mb-1">Categories</Label>
                               <Select
                                    options={categoryOptions}
                                    onChange={(selected) => {
@@ -252,7 +320,7 @@ const ProductForm = () => {
 
                          {/* subCategories */}
                          <div className="space-y-2">
-                              <label>subCategories</label>
+                              <Label className="block text-sm font-medium mb-1">Sub Categories</Label>
                               <Select
                                    options={subCategoryOptions}
                                    onChange={(selected) => {
@@ -269,7 +337,7 @@ const ProductForm = () => {
 
                          {/* Colors */}
                          <div className="space-y-2">
-                              <label>Colors</label>
+                              <Label className="block text-sm font-medium mb-1">Colors</Label>
                               <Select
                                    isMulti
                                    options={colorOptions}
@@ -288,7 +356,7 @@ const ProductForm = () => {
 
                          {/* sizes */}
                          <div className="space-y-2">
-                              <label>Sizes</label>
+                              <Label className="block text-sm font-medium mb-1">Sizes</Label>
                               <Select
                                    isMulti
                                    options={sizeOptions}
@@ -307,7 +375,7 @@ const ProductForm = () => {
 
                          {/* availability */}
                          <div className="space-y-2">
-                              <label>Status</label>
+                              <Label className="block text-sm font-medium mb-1">Status</Label>
                               <Select
                                    options={statusOptions}
                                    onChange={(selected) => {
@@ -323,7 +391,7 @@ const ProductForm = () => {
                          </div>
 
 
-                         <Button>submit</Button>
+                         <Button className="mt-4">Submit</Button>
                     </Card>
                </form>
 
@@ -334,19 +402,6 @@ const ProductForm = () => {
 
 
 
-               {/* Uploaded images preview */}
-               {images.length > 0 && (
-                    <div className="flex flex-wrap gap-3 mt-4">
-                         {images.map((img, index) => (
-                              <img
-                                   key={index}
-                                   src={img}
-                                   alt={`Uploaded ${index + 1}`}
-                                   className="w-24 h-24 object-cover rounded-md border"
-                              />
-                         ))}
-                    </div>
-               )}
           </Card>
      );
 };
