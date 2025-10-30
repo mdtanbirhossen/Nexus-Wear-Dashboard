@@ -29,6 +29,7 @@ import { Pencil, Trash, Eye } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { useDeleteProductMutation, useGetAllProductsQuery } from "@/redux/api/productsApi/productsApi"
 import { Product } from "@/types/product"
+import Loading from "../shared/Loading"
 
 
 export default function ProductsTable() {
@@ -129,14 +130,14 @@ export default function ProductsTable() {
                               </SelectContent>
                          </Select>
 
-                         <Button onClick={() => router.push("/product/create")}>
-                              Add Admin
+                         <Button onClick={() => router.push("/products/create")}>
+                              Add Product
                          </Button>
                     </div>
                </div>
 
                {/* Table */}
-               <div className="overflow-hidden rounded-md border text-center">
+               <div className="w-full overflow-x-auto rounded-md border text-center">
                     <Table>
                          <TableHeader>
                               <TableRow>
@@ -157,8 +158,8 @@ export default function ProductsTable() {
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={11} className="text-center py-6">
-                                             Loading...
+                                        <TableCell colSpan={11} className="w-full  py-6 ">
+                                             <Loading />
                                         </TableCell>
                                    </TableRow>
                               ) : products.length ? (
@@ -169,25 +170,21 @@ export default function ProductsTable() {
                                              </TableCell>
 
                                              <TableCell className="flex flex-wrap gap-1">
-                                                  {
-                                                       product?.images?.map((image, idx) => (
-                                                            <Image
-                                                                 key={idx}
-                                                                 src={image ?? "/profileImg.jpg"}
-                                                                 alt="images"
-                                                                 width={50}
-                                                                 height={50}
-                                                                 quality={75}
-                                                                 className="h-12 w-12 object-contain"
-                                                                 draggable={false}
-                                                            />
-                                                       ))
-                                                  }
+                                                  <Image
+                                                       key={idx}
+                                                       src={product.images?.[0] ?? "/profileImg.jpg"}
+                                                       alt="images"
+                                                       width={50}
+                                                       height={50}
+                                                       quality={75}
+                                                       className="h-12 w-12 object-contain"
+                                                       draggable={false}
+                                                  />
                                              </TableCell>
 
                                              <TableCell>{product.name}</TableCell>
                                              <TableCell>{product.productCode}</TableCell>
-                                             <TableCell>{product.description.slice(0,25) + "..."}</TableCell>
+                                             <TableCell>{product.description.slice(0, 25) + "..."}</TableCell>
                                              <TableCell>{product.price} tk</TableCell>
                                              <TableCell> {product.availability} </TableCell>
                                              <TableCell>
@@ -206,7 +203,7 @@ export default function ProductsTable() {
                                              <TableCell>
                                                   {/* Edit */}
                                                   <Button
-                                                       onClick={() => router.push(`/product/update/${product.id}`)}
+                                                       onClick={() => router.push(`/products/update/${product.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -215,7 +212,7 @@ export default function ProductsTable() {
 
                                                   {/* Details */}
                                                   <Button
-                                                       onClick={() => router.push(`/product/details/${product.id}`)}
+                                                       onClick={() => router.push(`/products/details/${product.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -318,6 +315,7 @@ export default function ProductsTable() {
                          </Pagination>
                     </div>
                </div>
+               
           </div>
      )
 }

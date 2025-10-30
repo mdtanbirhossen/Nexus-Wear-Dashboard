@@ -4,13 +4,14 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '../ui/card';
 import { useGetRoleByIdQuery } from '@/redux/api/roleApi/roleApi';
+import Loading from '../shared/Loading';
 
 const RoleDetails = () => {
      const { id } = useParams();
      const { data, isLoading, isError } = useGetRoleByIdQuery(id);
      const router = useRouter();
 
-     if (isLoading) return <p className="text-center py-10">Loading...</p>;
+     if (isLoading) return <div className='flex items-center justify-center w-full h-[calc(100vh-100px)]'><Loading /></div>;
      if (isError) return <p className="text-center py-10 text-red-500">Failed to load role details.</p>;
      if (!data) return <p className="text-center py-10">No roles found</p>;
 

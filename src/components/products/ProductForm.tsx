@@ -1,307 +1,166 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-
-// UI Components
+import React, { useState } from "react";
+import { Input } from "../ui/input";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { useUploadImagesMutation } from "@/redux/api/imagesUploadApi/imagesUploadApi";
+import { Product } from "@/types/product";
+import { useGetAllColorsQuery } from "@/redux/api/colorApi/colorApi";
+import { usePathname, useRouter } from "next/navigation";
+import { useCreateProductMutation } from "@/redux/api/productsApi/productsApi";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Color } from "@/types/color";
 import { Label } from "../ui/label";
-
-// Redux API
-import { useGetAllRolesQuery } from "@/redux/api/roleApi/roleApi";
-import {
-     useCreateAdminMutation,
-     useGetAdminByIdQuery,
-     useUpdateAdminDetailsMutation,
-} from "@/redux/api/adminApi/adminApi";
-
-// Types
-import { Role } from "@/types/role";
-import { Admin } from "@/types/admin";
+import { useGetAllsizesQuery } from "@/redux/api/sizeApi/sizeApi";
+import { Size } from "@/types/size";
+import { useGetAllCategoriesQuery } from "@/redux/api/categoryApi/categoryApi";
+import { Category, Subcategory } from "@/types/categoryAndSubcategory";
+import { useGetAllSubCategoriesQuery } from "@/redux/api/subCategoryApi/subCategoryApi";
+import Select from "react-select";
 import Image from "next/image";
+import Loading from "../shared/Loading";
+import toast from "react-hot-toast";
 
 const ProductForm = () => {
-     /* ---------------------- State & Hooks ---------------------- */
-     const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-     const { id } = useParams();
+     const [images, setImages] = useState<string[]>([]);
+     const [uploadImages] = useUploadImagesMutation();
+     const [loading, setLoading] = useState(false)
      const router = useRouter();
      const pathname = usePathname();
      const formattedText = pathname.split("/")[2];
 
-     /* ---------------------- API Calls ---------------------- */
-     const { data: roleData } = useGetAllRolesQuery(undefined);
-     const { data: admin } = useGetAdminByIdQuery(id);
-     const [createAdmin] = useCreateAdminMutation();
-     const [updateAdminDetails] = useUpdateAdminDetailsMutation();
 
-     const roles: Role[] = roleData || [];
-     const adminInfo: Admin | undefined = admin;
+
+     /* ---------------------- API Calls ---------------------- */
+     const [createProduct] = useCreateProductMutation();
+
+     const { data: colorData } = useGetAllColorsQuery(undefined);
+     const { data: sizeData } = useGetAllsizesQuery(undefined);
+     const { data: categoryData } = useGetAllCategoriesQuery(undefined);
+     const { data: subCategoryData } = useGetAllSubCategoriesQuery(undefined);
+
+
+     // categories
+     const categories: Category[] = categoryData?.data || [];
+     const categoryOptions = categories.map(category => ({
+          value: category.id,
+          label: category.name,
+     }));
+
+     // subCategories
+     const subCategories: Subcategory[] = subCategoryData?.data || [];
+     const subCategoryOptions = subCategories.map(subCategory => ({
+          value: subCategory.id,
+          label: subCategory.name,
+     }));
+
+     // colors
+     const colors: Color[] = colorData?.data || [];
+     const colorOptions = colors.map(color => ({
+          value: color.id,
+          label: color.name,
+     }));
+
+     // sizes
+     const sizes: Size[] = sizeData?.data || [];
+     const sizeOptions = sizes.map(size => ({
+          value: size.id,
+          label: size.name,
+     }));
+
+     // statusOption
+     const statusOptions = [
+          { value: 'published', label: "PUBLISHED" },
+          { value: 'out_of_stock', label: "OUT_OF_STOCK" },
+          { value: 'in_stock', label: "IN_STOCK" },
+          { value: 'discontinued', label: "DISCONTINUED" },
+          { value: 'up_coming', label: "UP_COMING" },
+     ];
+
+
+
+
+
 
      /* ---------------------- Form Setup ---------------------- */
+
      const {
           handleSubmit,
           register,
           formState: { errors },
+          setValue,
           reset,
-     } = useForm<Admin>();
-
-     
-     useEffect(() => {
-          if (adminInfo && formattedText === "update") {
-               reset({
-                    name: adminInfo.name || "",
-                    email: adminInfo.email || "",
-                    phone: adminInfo.phone || "",
-                    nationalId: adminInfo.nationalId || "",
-                    addressLine: adminInfo.addressLine || "",
-                    status: adminInfo.status || "active",
-                    roleId: adminInfo.roleId || "",
-                    password: "", // keep empty for update
-               });
-          }
-     }, [adminInfo, reset, formattedText]);
-
+     } = useForm<Product>();
 
 
      /* ---------------------- Submit Handler ---------------------- */
-     const onSubmit: SubmitHandler<Admin> = async (data) => {
-          const formData = new FormData();
+     const onSubmit: SubmitHandler<Product> = async (data) => {
+          const payload = {
+               name: data.name,
+               productCode: data.productCode,
+               description: data.description,
+               price: Number(data.price), // ensure it's a number
+               availability: data.availability,
+               categoryId: Number(data.categoryId),
+               subcategoryId: Number(data.subcategoryId),
+               colorIds: data.colorIds || [],
+               sizeIds: data.sizeIds || [],
+               images, 
+          };
 
-          formData.append("name", data.name);
-          formData.append("email", data.email);
-          formData.append("phone", data.phone);
-          formData.append("nationalId", data.nationalId);
-          formData.append("addressLine", data.addressLine);
-          formData.append("roleId", String(data.roleId));
-          formData.append("status", data.status);
-
-          // Only include password if creating OR if user typed a new one
-          if (formattedText === "create" || data.password) {
-               formData.append("password", data.password);
-          }
-
-          if (data.image && data.image[0]) {
-               formData.append("image", data.image[0]);
-          }
 
           try {
-               if (formattedText === "create") {
-                    const result = await createAdmin(formData).unwrap();
-                    toast.success(`${result.data.role.name} created successfully`);
-               } else {
-                    const result = await updateAdminDetails({ formData, adminId: id }).unwrap();
-                    console.log(result);
-                    toast.success(`${result.data.role.name} updated successfully`);
-               }
+               const result = await createProduct(payload).unwrap();
+               toast.success(`Product Created Successfully`);
+
                router.push("/admin");
           } catch (err) {
                console.error("Failed to save admin:", err);
                toast.error("Failed to save admin");
           }
+          // reset()
      };
 
-     /* ---------------------- JSX ---------------------- */
+
+
+
+
+     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+          setLoading(true)
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          const formData = new FormData();
+          formData.append("file", file);
+
+          try {
+               const result = await uploadImages(formData).unwrap();
+               const imageUrl =
+                    typeof result === "string"
+                         ? result
+                         : result?.data || result?.url;
+
+               setImages((prev) => [...prev, imageUrl]);
+               reset()
+          } catch (error) {
+               console.error("Upload failed:", error);
+          } finally {
+               setLoading(false)
+          }
+     };
+
      return (
-          <Card className="p-4 rounded-sm gap-4 shadow-none">
-               <h1 className="text-xl font-semibold">
-                    {formattedText === "update" ? "Update Admin Info" : "Create Admin"}
-               </h1>
+          <Card className="p-6 space-y-4 flex gap-4">
 
-               <form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="bg-white grid grid-cols-1 md:grid-cols-3 gap-4"
-               >
-                    {/* Left Section - Form Inputs */}
-                    <Card className="md:col-span-2 p-4 gap-2 rounded-sm shadow-none">
-                         {/* Name */}
-                         <div>
-                              <label className="block text-sm font-medium mb-1">Name</label>
-                              <Input
-                                   type="text"
-                                   placeholder="Enter Admin Name"
-                                   {...register("name", { required: "Name is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
-                              />
-                              {errors.name && (
-                                   <p className="text-red-500 text-sm mt-1">
-                                        {errors.name.message}
-                                   </p>
-                              )}
-                         </div>
+               {/* Left Section - Form Inputs */}
+               <form onSubmit={handleSubmit(onSubmit)}>
+                    <Card className="md:col-span-2 p-4 gap-2 rounded-sm shadow-none ">
 
-                         {/* Email */}
-                         <div>
-                              <label className="block text-sm font-medium mb-1">Email</label>
-                              <Input
-                                   type="email"
-                                   placeholder="Enter Admin Email"
-                                   {...register("email", { required: "Email is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
-                              />
-                              {errors.email && (
-                                   <p className="text-red-500 text-sm mt-1">
-                                        {errors.email.message}
-                                   </p>
-                              )}
-                         </div>
 
-                         {/* Phone */}
-                         <div>
-                              <label className="block text-sm font-medium mb-1">Phone</label>
-                              <Input
-                                   type="tel"
-                                   placeholder="Enter Phone Number"
-                                   {...register("phone", { required: "Phone is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
-                              />
-                              {errors.phone && (
-                                   <p className="text-red-500 text-sm mt-1">
-                                        {errors.phone.message}
-                                   </p>
-                              )}
-                         </div>
-
-                         {/* National ID */}
-                         <div>
-                              <label className="block text-sm font-medium mb-1">
-                                   National Id
-                              </label>
-                              <Input
-                                   type="text"
-                                   placeholder="Enter National Id"
-                                   {...register("nationalId", { required: "National ID is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
-                              />
-                              {errors.nationalId && (
-                                   <p className="text-red-500 text-sm mt-1">
-                                        {errors.nationalId.message}
-                                   </p>
-                              )}
-                         </div>
-
-                         {/* Address */}
-                         <div>
-                              <label className="block text-sm font-medium mb-1">Address</label>
-                              <Input
-                                   type="text"
-                                   placeholder="Enter Address"
-                                   {...register("addressLine", { required: "Address is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
-                              />
-                              {errors.addressLine && (
-                                   <p className="text-red-500 text-sm mt-1">
-                                        {errors.addressLine.message}
-                                   </p>
-                              )}
-                         </div>
-
-                         {/* Password */}
-                         <div>
-                              <label className="block text-sm font-medium mb-1">Password</label>
-                              <Input
-                                   type="password"
-                                   placeholder="(optional) if already have"
-                                   {...register("password")}
-                                   className="h-12 w-full border border-gray-300 rounded-md"
-                              />
-                         </div>
-
-                         {/* Role */}
-                         <div className="space-y-2">
-                              <Label htmlFor="role">Role</Label>
-                              <select
-                                   id="role"
-                                   defaultValue=""
-                                   {...register("roleId", { required: "Role is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md px-2 appearance-none"
-                              >
-                                   <option value="" disabled>
-                                        Select role
-                                   </option>
-                                   {roles.map((item) => (
-                                        <option key={item.id} value={item.id}>
-                                             {item.name}
-                                        </option>
-                                   ))}
-                              </select>
-                              {errors.roleId && (
-                                   <p className="text-red-500 text-sm">{errors.roleId.message}</p>
-                              )}
-                         </div>
-
-                         {/* Status */}
-                         <div className="space-y-2">
-                              <Label htmlFor="status">Status</Label>
-                              <select
-                                   id="status"
-                                   defaultValue=""
-                                   {...register("status", { required: "Status is required" })}
-                                   className="h-12 w-full border border-gray-300 rounded-md px-2 appearance-none"
-                              >
-                                   <option value="" disabled>
-                                        Select status
-                                   </option>
-                                   <option value="active">Active</option>
-                                   <option value="pending">Pending</option>
-                                   <option value="inactive">Inactive</option>
-                                   <option value="deleted">Deleted</option>
-                              </select>
-                              {errors.status && (
-                                   <p className="text-red-500 text-sm">{errors.status.message}</p>
-                              )}
-                         </div>
-                    </Card>
-
-                    {/* Right Section - Profile Image */}
-                    <div className="flex flex-col items-center justify-center border border-gray-200 rounded-sm p-4 relative">
-                         <div className="flex flex-col items-center">
-                              {/* Image Preview */}
-                              {imagePreview ? (
-                                   <div className="relative w-32 h-32">
-                                        <Image
-                                             src={imagePreview}
-                                             alt="Profile Preview"
-                                             width={500}
-                                             height={100}
-                                             quality={75}
-                                             className="w-full h-full object-cover rounded-full mb-4 border border-gray-300"
-                                             draggable={false}
-                                        />
-                                        <button
-                                             type="button"
-                                             onClick={() => setImagePreview(null)}
-                                             className="absolute top-1 right-1 bg-red-600 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full shadow-md hover:bg-red-700"
-                                        >
-                                             ✕
-                                        </button>
-                                   </div>
-                              ) : adminInfo?.image ? (
-                                   <div className="relative w-32 h-32">
-                                        <Image
-                                             src={adminInfo.image}
-                                             alt="Profile Preview"
-                                             width={500}
-                                             height={100}
-                                             quality={75}
-                                             className="w-full h-full object-cover rounded-full mb-4 border border-gray-300"
-                                             draggable={false}
-                                        />
-                                   </div>
-                              ) : (
-                                   <div className="w-32 h-32 flex items-center justify-center bg-gray-100 rounded-full mb-4 border border-gray-300">
-                                        <span className="text-gray-400">No Image</span>
-                                   </div>
-                              )}
-                         </div>
-
-                         {/* Upload Input */}
+                         {/* image upload section */}
                          <div className="w-full">
-                              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 transition">
+                              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300  cursor-pointer hover:bg-gray-50 transition">
                                    <div className="flex flex-col items-center justify-center">
                                         <p className="text-sm text-gray-500">
                                              <span className="font-semibold">Click to upload</span> or drag
@@ -312,7 +171,7 @@ const ProductForm = () => {
                                    <Input
                                         type="file"
                                         accept="image/*"
-                                        {...register("image", {
+                                        {...register("file", {
                                              validate: {
                                                   lessThan2MB: (value) => {
                                                        const files = value as unknown as FileList;
@@ -323,38 +182,216 @@ const ProductForm = () => {
                                                        );
                                                   },
                                              },
-                                             onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                                                  const file = e.target.files?.[0];
-                                                  if (file) {
-                                                       setImagePreview(URL.createObjectURL(file));
-                                                  }
-                                             },
                                         })}
-                                        className="h-12 hidden"
+                                        onChange={handleFileChange}
+                                        className=" hidden"
                                    />
-                                   {errors.image && (
+                                   {errors.file && (
                                         <p className="text-red-500 text-sm mt-1">
-                                             {errors.image.message}
+                                             {errors.file.message}
                                         </p>
                                    )}
                               </label>
                          </div>
-                    </div>
 
-                    {/* Action Buttons */}
-                    <div className="md:col-span-3 flex justify-end gap-2">
-                         <Button
-                              type="button"
-                              onClick={() => router.back()}
-                              className="bg-gray-600"
-                         >
-                              Go Back
-                         </Button>
-                         <Button type="submit" className="bg-blue-600">
-                              {formattedText === "update" ? "Update" : "Create "}
-                         </Button>
-                    </div>
+                         {/* Uploaded images preview */}
+                         <div className="flex gap-4">
+                              {images.length > 0 && (
+                                   <div className="flex flex-wrap gap-3 mt-4">
+                                        {images.map((img, index) => (
+                                             <Image
+                                                  key={index}
+                                                  src={img}
+                                                  alt={`Uploaded ${index + 1}`}
+                                                  width={100}
+                                                  height={100}
+                                                  className="w-24 h-24 object-contain rounded-b-md border"
+                                             />
+                                        ))}
+                                   </div>
+                              )}
+                              {
+                                   loading && (
+                                        <div className="w-24 h-24  rounded-b-md border bg-gray-200 mt-4 flex items-center  justify-center">
+                                             <Loading />
+                                        </div>
+                                   )
+                              }
+                         </div>
+
+
+
+
+
+                         {/* Name */}
+                         <div>
+                              <Label className="block text-sm font-medium mb-1">Name</Label>
+                              <Input
+                                   type="text"
+                                   placeholder="Enter Admin Name"
+                                   {...register("name", { required: "Name is required" })}
+                                   className=" w-full border border-gray-300 "
+                              />
+                              {errors.name && (
+                                   <p className="text-red-500 text-sm mt-1">
+                                        {errors.name.message}
+                                   </p>
+                              )}
+                         </div>
+
+                         {/* productCode */}
+                         <div>
+                              <Label className="block text-sm font-medium mb-1">Product Code</Label>
+                              <Input
+                                   type="text"
+                                   placeholder="Enter Product Code"
+                                   {...register("productCode", { required: "productCode is required" })}
+                                   className=" w-full border border-gray-300 "
+                              />
+                              {errors.productCode && (
+                                   <p className="text-red-500 text-sm mt-1">
+                                        {errors.productCode.message}
+                                   </p>
+                              )}
+                         </div>
+
+                         {/* Description */}
+                         <div>
+                              <Label className="block text-sm font-medium mb-1">Description</Label>
+                              <Input
+                                   type="text"
+                                   placeholder="Enter  Description"
+                                   {...register("description", { required: "Description is required" })}
+                                   className=" w-full border border-gray-300 "
+                              />
+                              {errors.description && (
+                                   <p className="text-red-500 text-sm mt-1">
+                                        {errors.description.message}
+                                   </p>
+                              )}
+                         </div>
+
+                         {/* Price */}
+                         <div>
+                              <Label className="block text-sm font-medium mb-1">
+                                   Price
+                              </Label>
+                              <Input
+                                   type="text"
+                                   placeholder="Enter Price"
+                                   {...register("price", { required: "Price is required" })}
+                                   className=" w-full border border-gray-300 "
+                              />
+                              {errors.price && (
+                                   <p className="text-red-500 text-sm mt-1">
+                                        {errors.price.message}
+                                   </p>
+                              )}
+                         </div>
+
+
+                         {/* Categories */}
+                         <div className="space-y-2">
+                              <Label className="block text-sm font-medium mb-1">Categories</Label>
+                              <Select
+                                   options={categoryOptions}
+                                   onChange={(selected) => {
+                                        setValue(
+                                             "categoryId", Number(selected?.value)
+                                        );
+                                   }}
+                                   placeholder="Select colors..."
+                              />
+                              {errors.categoryId && (
+                                   <p className="text-red-500 text-sm">{errors.categoryId.message}</p>
+                              )}
+
+                         </div>
+
+                         {/* subCategories */}
+                         <div className="space-y-2">
+                              <Label className="block text-sm font-medium mb-1">Sub Categories</Label>
+                              <Select
+                                   options={subCategoryOptions}
+                                   onChange={(selected) => {
+                                        setValue(
+                                             "subcategoryId", Number(selected?.value)
+                                        );
+                                   }}
+                                   placeholder="Select colors..."
+                              />
+                              {errors.subcategoryId && (
+                                   <p className="text-red-500 text-sm">{errors.subcategoryId.message}</p>
+                              )}
+                         </div>
+
+                         {/* Colors */}
+                         <div className="space-y-2">
+                              <Label className="block text-sm font-medium mb-1">Colors</Label>
+                              <Select
+                                   isMulti
+                                   options={colorOptions}
+                                   onChange={(selected) => {
+                                        setValue(
+                                             "colorIds",
+                                             selected.map(item => item.value)
+                                        );
+                                   }}
+                                   placeholder="Select colors..."
+                              />
+                              {errors.colorIds && (
+                                   <p className="text-red-500 text-sm">{errors.colorIds.message}</p>
+                              )}
+                         </div>
+
+                         {/* sizes */}
+                         <div className="space-y-2">
+                              <Label className="block text-sm font-medium mb-1">Sizes</Label>
+                              <Select
+                                   isMulti
+                                   options={sizeOptions}
+                                   onChange={(selected) => {
+                                        setValue(
+                                             "sizeIds",
+                                             selected.map(item => item.value)
+                                        );
+                                   }}
+                                   placeholder="Select sizes..."
+                              />
+                              {errors.sizeIds && (
+                                   <p className="text-red-500 text-sm">{errors.sizeIds.message}</p>
+                              )}
+                         </div>
+
+                         {/* availability */}
+                         <div className="space-y-2">
+                              <Label className="block text-sm font-medium mb-1">Status</Label>
+                              <Select
+                                   options={statusOptions}
+                                   onChange={(selected) => {
+                                        setValue(
+                                             "availability", String(selected?.value)
+                                        );
+                                   }}
+                                   placeholder="Select Status..."
+                              />
+                              {errors.categoryId && (
+                                   <p className="text-red-500 text-sm">{errors.categoryId.message}</p>
+                              )}
+                         </div>
+
+
+                         <Button className="mt-4">Submit</Button>
+                    </Card>
                </form>
+
+
+
+
+
+
+
+
           </Card>
      );
 };

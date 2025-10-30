@@ -16,10 +16,12 @@ import Image from "next/image";
 //Redux
 import { useCreateCategoryMutation, useGetCategoryByIdQuery, useUpdateCategoryDetailsMutation } from "@/redux/api/categoryApi/categoryApi";
 import { Category } from "@/types/categoryAndSubcategory";
+import Loading from "../shared/Loading";
 
 const CategoryForm = () => {
      /* ---------------------- State & Hooks ---------------------- */
      const [imagePreview, setImagePreview] = useState<string | null>(null);
+     const [loading, setLoading] = useState(false)
 
      const { id } = useParams();
      const router = useRouter();
@@ -54,6 +56,7 @@ const CategoryForm = () => {
 
      /* ---------------------- Submit Handler ---------------------- */
      const onSubmit: SubmitHandler<Category> = async (data) => {
+          setLoading(true)
           const formData = new FormData();
 
           formData.append("name", data.name);
@@ -76,6 +79,8 @@ const CategoryForm = () => {
           } catch (err) {
                console.error("Failed to save category:", err);
                toast.error("Failed to save category");
+          } finally {
+               setLoading(false)
           }
      };
 
@@ -219,8 +224,10 @@ const CategoryForm = () => {
                          >
                               Go Back
                          </Button>
-                         <Button type="submit" className="bg-blue-600">
-                              {formattedText === "update" ? "Update" : "Create "}
+                         <Button disabled={loading} type="submit" >
+                              {
+                                   loading ? <Loading /> : formattedText === "update" ? "Update" : "Create "
+                              }
                          </Button>
                     </div>
                </form>

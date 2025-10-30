@@ -31,6 +31,7 @@ import { Color } from "@/types/color"
 
 // Redux
 import { useDeleteColorMutation, useGetAllColorsQuery } from "@/redux/api/colorApi/colorApi"
+import Loading from "../shared/Loading"
 
 
 export default function ColorTable() {
@@ -153,8 +154,8 @@ export default function ColorTable() {
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-6">
-                                             Loading...
+                                        <TableCell colSpan={7} className="w-full  py-6 ">
+                                             <Loading />
                                         </TableCell>
                                    </TableRow>
                               ) : colors.length ? (

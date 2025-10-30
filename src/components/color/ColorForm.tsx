@@ -16,10 +16,12 @@ import { Label } from "../ui/label";
 import Image from "next/image";
 import { useCreateColorMutation, useGetColorByIdQuery, useUpdateColorDetailsMutation } from "@/redux/api/colorApi/colorApi";
 import { Color } from "@/types/color";
+import Loading from "../shared/Loading";
 
 const ColorForm = () => {
      /* ---------------------- State & Hooks ---------------------- */
      const [imagePreview, setImagePreview] = useState<string | null>(null);
+     const [loading, setLoading] = useState(false)
 
      const { id } = useParams();
      const router = useRouter();
@@ -56,6 +58,7 @@ const ColorForm = () => {
 
      /* ---------------------- Submit Handler ---------------------- */
      const onSubmit: SubmitHandler<Color> = async (data) => {
+          setLoading(true)
           const formData = new FormData();
 
           formData.append("name", data.name);
@@ -81,6 +84,8 @@ const ColorForm = () => {
           } catch (err) {
                console.error("Failed to save color:", err);
                toast.error("Failed to save color");
+          } finally {
+               setLoading(false)
           }
      };
 
@@ -225,8 +230,10 @@ const ColorForm = () => {
                          >
                               Go Back
                          </Button>
-                         <Button type="submit" className="bg-blue-600">
-                              {formattedText === "update" ? "Update" : "Create "}
+                         <Button disabled={loading} type="submit" >
+                              {
+                                   loading ? <Loading /> : formattedText === "update" ? "Update" : "Create "
+                              }
                          </Button>
                     </div>
                </form>

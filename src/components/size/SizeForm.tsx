@@ -15,6 +15,7 @@ import { Label } from "../ui/label";
 
 import { Size} from "@/types/size";
 import { useCreateSizeMutation, useGetSizeByIdQuery, useUpdateSizeDetailsMutation } from "@/redux/api/sizeApi/sizeApi";
+import Loading from "../shared/Loading";
 
 const SizeForm = () => {
      /* ---------------------- State & Hooks ---------------------- */
@@ -23,6 +24,7 @@ const SizeForm = () => {
      const router = useRouter();
      const pathname = usePathname();
      const formattedText = pathname.split("/")[2];
+     const [loading, setLoading] = useState(false)
 
      /* ---------------------- API Calls ---------------------- */
      const { data: size } = useGetSizeByIdQuery(id);
@@ -54,6 +56,7 @@ const SizeForm = () => {
 
      /* ---------------------- Submit Handler ---------------------- */
      const onSubmit: SubmitHandler<Size> = async (data) => {
+          setLoading(true)
           const formData = new FormData();
 
           formData.append("name", data.name);
@@ -74,6 +77,8 @@ const SizeForm = () => {
           } catch (err) {
                console.error("Failed to save size:", err);
                toast.error("Failed to save size");
+          } finally {
+               setLoading(false)
           }
      };
 
@@ -135,8 +140,10 @@ const SizeForm = () => {
                          >
                               Go Back
                          </Button>
-                         <Button type="submit" className="bg-blue-600">
-                              {formattedText === "update" ? "Update" : "Create "}
+                         <Button disabled={loading} type="submit" >
+                              {
+                                   loading ? <Loading /> : formattedText === "update" ? "Update" : "Create "
+                              }
                          </Button>
                     </div>
                </form>

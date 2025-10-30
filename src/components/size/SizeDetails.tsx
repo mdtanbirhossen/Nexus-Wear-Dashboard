@@ -5,6 +5,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '../ui/card';
 import { useGetSizeByIdQuery } from '@/redux/api/sizeApi/sizeApi';
+import Loading from '../shared/Loading';
 
 const SizeDetails = () => {
      const { id } = useParams();
@@ -12,7 +13,7 @@ const SizeDetails = () => {
      console.log(isError);
      const router = useRouter();
 
-     if (isLoading) return <p className="text-center py-10">Loading...</p>;
+     if (isLoading) return <div className='flex items-center justify-center w-full h-[calc(100vh-100px)]'><Loading /></div>;
      if (isError) return <p className="text-center py-10 text-red-500">Failed to load size details.</p>;
      if (!data) return <p className="text-center py-10">No Size found</p>;
 

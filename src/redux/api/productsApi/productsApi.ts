@@ -1,3 +1,5 @@
+
+import { Product } from "@/types/product";
 import { apiSlice } from "../apiSlice";
 
 export const productsApi = apiSlice.injectEndpoints({
@@ -11,7 +13,7 @@ export const productsApi = apiSlice.injectEndpoints({
                providesTags: ["Product"],
           }),
 
-          getProductById: builder.query({
+          getProductById: builder.query<Product, string>({
                query: (productId) => `/product/${productId}`
           }),
 
@@ -23,13 +25,17 @@ export const productsApi = apiSlice.injectEndpoints({
           }),
 
           createProduct: builder.mutation({
-               query: (formData: FormData) => ({
+               query: (data) => ({
                     url: '/product',
-                    method: "POST",
-                    body: formData
+                    method: 'POST',
+                    body: data, // send JSON instead of FormData
+                    headers: {
+                         'Content-Type': 'application/json', // ensure JSON type
+                    },
                }),
-               invalidatesTags: ["Product"],
+               invalidatesTags: ['Product'],
           }),
+
           updateProductDetails: builder.mutation({
                query: ({ formData, productId }) => ({
                     url: `/product/${productId}`,
@@ -41,4 +47,4 @@ export const productsApi = apiSlice.injectEndpoints({
      }),
 });
 
-export const { useGetAllProductsQuery,useGetProductByIdQuery,useDeleteProductMutation,useCreateProductMutation,useUpdateProductDetailsMutation } = productsApi;
+export const { useGetAllProductsQuery, useGetProductByIdQuery, useDeleteProductMutation, useCreateProductMutation, useUpdateProductDetailsMutation } = productsApi;

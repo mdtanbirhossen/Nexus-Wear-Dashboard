@@ -15,6 +15,7 @@ import { useCreateRoleMutation, useGetRoleByIdQuery, useUpdateRoleDetailsMutatio
 
 // Types
 import { Role } from "@/types/role";
+import Loading from "../shared/Loading";
 
 const RoleForm = () => {
 
@@ -22,6 +23,7 @@ const RoleForm = () => {
      const router = useRouter();
      const pathname = usePathname();
      const formattedText = pathname.split("/")[2];
+     const [loading, setLoading] = useState(false)
 
      /* ---------------------- API Calls ---------------------- */
      const { data: role } = useGetRoleByIdQuery(id);
@@ -50,6 +52,7 @@ const RoleForm = () => {
 
      /* ---------------------- Submit Handler ---------------------- */
      const onSubmit: SubmitHandler<Role> = async (data) => {
+          setLoading(true)
 
           const roleData = {
                name: data.name,
@@ -70,6 +73,8 @@ const RoleForm = () => {
           } catch (err) {
                console.error("Failed to save role:", err);
                toast.error("Failed to save role");
+          } finally {
+               setLoading(false)
           }
      };
 
@@ -129,8 +134,10 @@ const RoleForm = () => {
                          >
                               Go Back
                          </Button>
-                         <Button type="submit" className="bg-blue-600">
-                              {formattedText === "update" ? "Update" : "Create "}
+                         <Button disabled={loading} type="submit" >
+                              {
+                                   loading ? <Loading /> : formattedText === "update" ? "Update" : "Create "
+                              }
                          </Button>
                     </div>
                </form>

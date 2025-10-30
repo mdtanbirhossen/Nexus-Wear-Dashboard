@@ -32,6 +32,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useDeleteSubCategoryMutation, useGetAllSubCategoriesQuery } from "@/redux/api/subCategoryApi/subCategoryApi"
 import { Subcategory } from "@/types/categoryAndSubcategory"
 import toast from "react-hot-toast"
+import Loading from "../shared/Loading"
 
 
 
@@ -160,8 +161,8 @@ export default function SubCategoryTable() {
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-6">
-                                             Loading...
+                                        <TableCell colSpan={7} className="w-full  py-6 ">
+                                             <Loading />
                                         </TableCell>
                                    </TableRow>
                               ) : subCategories.length ? (

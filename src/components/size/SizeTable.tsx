@@ -3,7 +3,6 @@
 import * as React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 
 
 
@@ -27,10 +26,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 // Icons
 import { Pencil, Trash, Eye } from "lucide-react"
 // Types
-import { Color } from "@/types/size"
 
 // Redux
 import { useDeleteSizeMutation, useGetAllsizesQuery } from "@/redux/api/sizeApi/sizeApi"
+import Loading from "../shared/Loading"
+import { Color } from "@/types/color"
 
 
 export default function SizeTable() {
@@ -153,8 +153,8 @@ export default function SizeTable() {
                          <TableBody>
                               {isLoading ? (
                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-6">
-                                             Loading...
+                                        <TableCell colSpan={7} className="w-full  py-6 ">
+                                             <Loading />
                                         </TableCell>
                                    </TableRow>
                               ) : sizes.length ? (
