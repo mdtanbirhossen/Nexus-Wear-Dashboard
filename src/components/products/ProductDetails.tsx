@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '../ui/card';
 import Image from 'next/image';
 import { useGetProductByIdQuery } from '@/redux/api/productsApi/productsApi';
+import Loading from '../shared/Loading';
 
 const ProductDetails = () => {
      const { id } = useParams();
@@ -12,9 +13,9 @@ const ProductDetails = () => {
      console.log(isError);
      const router = useRouter();
 
-     if (isLoading) return <p className="text-center py-10">Loading...</p>;
-     if (isError) return <p className="text-center py-10 text-red-500">Failed to load admin details.</p>;
-     if (!data) return <p className="text-center py-10">No admin found</p>;
+     if (isLoading) return <div className='flex items-center justify-center w-full h-[calc(100vh-100px)]'><Loading /></div>;
+     if (isError) return <p className="text-center py-10 text-red-500">Failed to load product details.</p>;
+     if (!data) return <p className="text-center py-10">No Product found</p>;
 
      const {
           name,
@@ -39,10 +40,10 @@ const ProductDetails = () => {
           { label: "description", value: description },
           { label: "price", value: price },
           { label: "availability", value: availability },
-          { label: "category", value: category },
-          { label: "subCategory", value: subCategory },
-          { label: "colors", value: colors },
-          { label: "sizes", value: sizes },
+          // { label: "category", value: category },
+          // { label: "subCategory", value: subCategory },
+          // { label: "colors", value: colors },
+          // { label: "sizes", value: sizes },
           { label: "viewCount", value: viewCount },
           { label: "orderCount", value: orderCount },
           { label: "Created At", value: new Date(createdAt).toLocaleString() },
@@ -62,7 +63,7 @@ const ProductDetails = () => {
                                    width={100}
                                    height={100}
                                    quality={75}
-                                   className="w-32 h-32 sm:w-42 sm:h-42 rounded-full border border-gray-300 object-cover"
+                                   className="w-32 h-32 sm:w-42 sm:h-42  object-contain "
                               />
                          ))
                     }

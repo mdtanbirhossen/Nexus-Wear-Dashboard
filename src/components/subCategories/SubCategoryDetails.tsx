@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Card } from '../ui/card';
 import Image from 'next/image';
 import { useGetSubCategoryByIdQuery } from '@/redux/api/subCategoryApi/subCategoryApi';
+import Loading from '../shared/Loading';
 
 const SubCategoryDetails = () => {
      const { id } = useParams();
      const { data, isLoading, isError } = useGetSubCategoryByIdQuery(id);
      const router = useRouter();
 
-     if (isLoading) return <p className="text-center py-10">Loading...</p>;
+     if (isLoading) return <div className='flex items-center justify-center w-full h-[calc(100vh-100px)]'><Loading /></div>;
      if (isError) return <p className="text-center py-10 text-red-500">Failed to load subCategoryDetails details.</p>;
      if (!data) return <p className="text-center py-10">No admin found</p>;
 

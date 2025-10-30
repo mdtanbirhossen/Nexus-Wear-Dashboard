@@ -203,7 +203,7 @@ export default function ProductsTable() {
                                              <TableCell>
                                                   {/* Edit */}
                                                   <Button
-                                                       onClick={() => router.push(`/product/update/${product.id}`)}
+                                                       onClick={() => router.push(`/products/update/${product.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -212,7 +212,7 @@ export default function ProductsTable() {
 
                                                   {/* Details */}
                                                   <Button
-                                                       onClick={() => router.push(`/product/details/${product.id}`)}
+                                                       onClick={() => router.push(`/products/details/${product.id}`)}
                                                        variant="ghost"
                                                        className="h-8 w-8 p-0"
                                                   >
@@ -315,6 +315,7 @@ export default function ProductsTable() {
                          </Pagination>
                     </div>
                </div>
+               
           </div>
      )
 }

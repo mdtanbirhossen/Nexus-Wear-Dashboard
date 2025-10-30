@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Card } from '../ui/card';
 import Image from 'next/image';
 import { useGetCategoryByIdQuery } from '@/redux/api/categoryApi/categoryApi';
+import Loading from '../shared/Loading';
 
 const CategoryDetails = () => {
      const { id } = useParams();
      const { data, isLoading, isError } = useGetCategoryByIdQuery(id);
      const router = useRouter();
 
-     if (isLoading) return <p className="text-center py-10">Loading...</p>;
+     if (isLoading) return <div className='flex items-center justify-center w-full h-[calc(100vh-100px)]'><Loading /></div>;
      if (isError) return <p className="text-center py-10 text-red-500">Failed to load admin details.</p>;
      if (!data) return <p className="text-center py-10">No admin found</p>;
 
