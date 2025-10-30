@@ -15,8 +15,8 @@ const ColorDetails = () => {
      const router = useRouter();
 
      if (isLoading) return <div className='flex items-center justify-center w-full h-[calc(100vh-100px)]'><Loading /></div>;
-     if (isError) return <p className="text-center py-10 text-red-500">Failed to load admin details.</p>;
-     if (!data) return <p className="text-center py-10">No admin found</p>;
+     if (isError) return <p className="text-center py-10 text-red-500">Failed to load color details.</p>;
+     if (!data) return <p className="text-center py-10">No color found</p>;
 
      const {
           name,
